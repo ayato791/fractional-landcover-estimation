@@ -1,25 +1,67 @@
 # Fractional Land-Cover Estimation
 
-Deep learning framework for estimating land-cover composition ratios from Sentinel-2 imagery using OpenEarthMap labels.
+衛星画像を用いて、1画素内の土地被覆構成比率を推定するための研究コードをまとめたリポジトリです。
 
-## Overview
+## 概要
 
-This repository contains preprocessing pipelines and deep learning models for estimating fractional land-cover composition from medium-resolution satellite imagery.
+Sentinel-2 のような中解像度衛星画像では、1つの画素（10m × 10m）の中に複数の土地被覆クラスが混在しています。  
+従来の土地被覆分類では、1画素を単一クラスとして扱うことが一般的ですが、都市部や農地周辺では実際の地表状況を十分に表現できない場合があります。
 
-## Features
+本研究では、高解像度土地被覆データである OpenEarthMap を利用し、各 Sentinel-2 画素内に含まれる土地被覆クラスの構成比率を教師データとして生成します。  
+その上で、Sentinel-2 のスペクトル情報および周辺画素の空間情報を入力として、深層学習モデルによって土地被覆構成比率を推定します。
 
-- Sentinel-2 preprocessing
-- OEM ratio generation
-- GeoTIFF reprojection
-- MLP / 2D CNN / 3D CNN models
-- Fractional land-cover estimation
+具体的には、以下のような処理を行っています。
 
-## Repository Structure
+- Sentinel-2 画像の前処理
+- GeoTIFF の再投影・位置合わせ
+- OpenEarthMap ラベルの集約による比率データ生成
+- 学習用 GeoTIFF データセット構築
+- MLP / 2D CNN / 3D CNN モデルによる推定
+- 土地被覆構成比率の可視化・評価
 
-src/models
-src/dataset
+本研究は、リモートセンシング、GIS、深層学習を組み合わせた研究であり、都市解析、環境モニタリング、土地利用分析などへの応用を目的としています。
 
-## Technologies
+
+### Sentinel-2 データ前処理
+
+Sentinel-2 衛星画像に対して前処理を行うためのコードを含みます。  
+対象地域・期間の画像取得後、不要バンドの整理、GeoTIFF変換、前処理用データ生成などを行います。
+
+### OpenEarthMap 比率データ生成
+
+高解像度土地被覆データである OpenEarthMap を利用し、各 Sentinel-2 画素内に含まれる土地被覆クラスの構成比率を生成します。  
+これにより、1画素を単一ラベルではなく「複数クラスの割合」として扱う教師データを作成します。
+
+### GeoTIFF 再投影・位置合わせ
+
+Sentinel-2 と OpenEarthMap の解像度・座標系・グリッドを統一するため、GeoTIFF の再投影および位置合わせを行います。  
+異なるデータセット間で画素単位の対応付けを可能にします。
+
+### 深層学習モデル
+
+複数の深層学習モデルを実装しています。
+
+- MLP  
+  スペクトル情報を中心に扱う全結合ネットワーク
+
+- 2D CNN  
+  周辺画素の空間情報を利用する畳み込みニューラルネットワーク
+
+- 3D CNN  
+  空間情報とスペクトル情報を同時に扱う3次元畳み込みモデル
+
+### 土地被覆構成比率推定
+
+各画素について、土地被覆クラスの構成比率を推定します。  
+従来の単一クラス分類ではなく、「建物」「道路」「植生」などの割合を出力することで、混合画素をより詳細に表現します。
+
+## ディレクトリ構成
+src/
+├── dataset/      # データセット構築・GeoTIFF前処理
+├── models/       # 深層学習モデル実装
+├── sentinel2/    # Sentinel-2 取得コード
+
+## 使用技術
 
 - Python
 - PyTorch
@@ -27,6 +69,10 @@ src/dataset
 - GeoPandas
 - NumPy
 
-## Research Topic
+## 研究テーマ
 
-This study focuses on estimating land-cover composition ratios within mixed pixels using Sentinel-2 imagery and OpenEarthMap labels.
+本研究では、Sentinel-2 のような中解像度衛星画像に含まれる混合画素に対して、土地被覆クラスの構成比率を推定することを目的としています。
+
+従来の土地被覆分類では、1画素を単一クラスとして扱うことが一般的ですが、都市部や農地周辺では複数の土地被覆が同時に含まれることが多く、実際の地表状況を十分に表現できない場合があります。
+
+本研究では、高解像度土地被覆データである OpenEarthMap を利用して教師データを生成し、Sentinel-2 のスペクトル情報および周辺空間情報を入力として、深層学習モデルにより各クラスの構成比率を推定します。
