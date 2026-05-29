@@ -11,8 +11,8 @@ import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 
 # ========= 設定 =========
-INPUT_DIR   = "/mnt/d/kanno/emb_oem/combined_tif"   # S2 + Embedding + 8バンドTIFが入っているディレクトリ
-OUTPUT_DIR  = "/home/kanno/code/outputs/3dcnn/embedding"            # 出力ディレクトリ
+INPUT_DIR   = "/workspace/data/combined_tif"
+OUTPUT_DIR  = "/workspace/outputs/cnn3d/embedding"
 SEED        = 42
 TRAIN_RATIO = 0.70
 VAL_RATIO   = 0.10
