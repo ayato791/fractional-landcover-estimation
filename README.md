@@ -41,33 +41,25 @@ Sentinel-2 と OpenEarthMap の解像度・座標系・グリッドを統一す�
 
 複数の深層学習モデルを実装しています。
 
-- MLP  
+- MLP
   スペクトル情報を中心に扱う全結合ネットワーク
 
-- 2D CNN  
+- 2D CNN
   周辺画素の空間情報を利用する畳み込みニューラルネットワーク
 
-- 3D CNN  
+- 3D CNN
   空間情報とスペクトル情報を同時に扱う3次元畳み込みモデル
 
 ### 土地被覆構成比率推定
 
-各画素について、土地被覆クラスの構成比率を推定します。  
+各画素について、土地被覆クラスの構成比率を推定します。
 従来の単一クラス分類ではなく、「建物」「道路」「植生」などの割合を出力することで、混合画素をより詳細に表現します。
 
 ## ディレクトリ構成
-src/
-├── dataset/      # データセット構築・GeoTIFF前処理
-├── models/       # 深層学習モデル実装
-├── sentinel2/    # Sentinel-2 取得コード
-
-## 使用技術
-
-- Python
-- PyTorch
-- Rasterio
-- GeoPandas
-- NumPy
+- **src**
+**/dataset**: データセット構築・GeoTIFF前処理
+**/models**:       # 深層学習モデル実装
+**/sentinel2**:   # Sentinel-2 取得コード
 
 ## 研究テーマ
 
@@ -76,3 +68,50 @@ src/
 従来の土地被覆分類では、1画素を単一クラスとして扱うことが一般的ですが、都市部や農地周辺では複数の土地被覆が同時に含まれることが多く、実際の地表状況を十分に表現できない場合があります。
 
 本研究では、高解像度土地被覆データである OpenEarthMap を利用して教師データを生成し、Sentinel-2 のスペクトル情報および周辺空間情報を入力として、深層学習モデルにより各クラスの構成比率を推定します。
+
+## 実験環境の構築
+
+実験はDockerコンテナ上で行うことを想定している。
+
+Dockerコンテナを使用するためには、以下の手順を実行すれば良い。
+
+1. このリポジトリをクローンする。
+
+2. OpenEarthMapのラベルデータをダウンロードする
+
+OpenEarthMapのデータセットをダウンロードし、任意のディレクトリに配置する。
+
+3. Sentinel-2のデータを取得する。
+
+Sentinel-2画像の取得には、[src/sentinel2](./src/sentinel2) 内のNotebookを使用する。
+
+取得したGeoTIFFを任意のディレクトリに保存する。
+
+4. Sentinel-2画像をOpenEarthMapに合わせて再投影し、学習用GeoTIFFを作成する
+手順は[src/dataset](./src/dataset)を参照する。
+
+5. docker-compose.yml の volumes を設定する
+
+学習用データの保存先に応じて、docker-compose.yml の volumes を編集する。
+
+例：
+
+volumes:
+  - .:/workspace
+  - /path/to/data:/workspace/data
+
+/path/to/data は各自のデータ保存場所に変更すること。
+
+7. Dockerコンテナをビルドする
+
+docker compose build
+
+8. Dockerコンテナを起動する
+
+docker compose up -d
+
+9. Dockerコンテナへ接続する
+
+docker compose exec fractional-landcover bash
+
+10. 学習を実行する

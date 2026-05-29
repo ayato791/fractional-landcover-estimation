@@ -1,0 +1,17 @@
+services:
+  fractional-landcover:
+    build: .
+    image: kanno/fractional-landcover:latest
+    container_name: fractional-landcover
+    volumes:
+      - .:/workspace
+      - /path/to/data:/workspace/data
+    working_dir: /workspace
+    command: /bin/bash
+    tty: true
+    stdin_open: true
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]

@@ -6,8 +6,8 @@ import torch, torch.nn as nn, torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
 
 # ========= 設定 =========
-INPUT_DIR   = "/mnt/d/kanno/emb_oem/combined_tif"   # 入力特徴量 + OEMラベルを含むGeoTIFFディレクトリ
-OUTPUT_DIR  = "/home/kanno/code/outputs/mlp/embedding"   # 出力ディレクトリ
+INPUT_DIR   = "/workspace/data/combined_tif"
+OUTPUT_DIR  = "/workspace/outputs/mlp/embedding"
 SEED        = 42
 TRAIN_RATIO = 0.70
 VAL_RATIO   = 0.10
